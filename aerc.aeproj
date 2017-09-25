@@ -1,0 +1,30 @@
+solution 	"aerc"
+	architecture "amd64"
+	configurations { "Release", "Debug" }
+	flags { "StaticRuntime" }
+	location ""
+
+	filter "configurations:Debug"
+		warnings 	"Extra"
+		symbols     "On"
+
+	filter "configurations:Release"
+		flags       { "NoBufferSecurityCheck", "NoRuntimeChecks" }
+		optimize    "Full"
+	
+project 	"aerc"
+	objdir		"Build/%{cfg.systemarch}"
+	targetdir	"%{cfg.objdir}/%{cfg.buildcfg}"
+	kind 		"ConsoleApp"
+
+	files {	
+		"Source/*.cpp",
+		"Source/*.h"
+	}
+
+	includedirs {
+		"Source"
+	}
+
+	filter "system:windows"
+		files{ "aerc.rc" }

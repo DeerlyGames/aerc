@@ -1,0 +1,40 @@
+
+#include "winresrc.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+A_MAIN_ICON      ICON "abstractionConsole.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,2,0,0
+ PRODUCTVERSION 0,2,0,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+ FILEFLAGS 0x0L
+ FILEOS VOS__WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "Deerly Games\0"
+            VALUE "FileDescription", "Abstraction Resource Compiler\0"
+            VALUE "FileVersion", "0.2.0"
+            VALUE "InternalName", "Abstraction"
+            VALUE "LegalCopyright", "Copyright (C) 2016 Deerly Games"
+            VALUE "OriginalFilename", "aerc.exe"
+            VALUE "ProductName", "Abstraction Resource Compiler"
+            VALUE "ProductVersion", "0.2.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

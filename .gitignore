@@ -1,0 +1,33 @@
+# Ignore everything in this directory
+/Build/*
+
+/Win64/
+
+# Visual Studio
+.vs
+*.opensdf
+*.sdf
+*.user
+*.suo
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.db
+*.opendb
+*.ilk
+*.vx
+# Win64
+
+# Qt Creator
+#*.creator
+#*.files
+#*.includes
+*.creator.user
+
+# Makefile
+/Makefile
+.make
+
+# XCode
+Entry.xcworkspace/*
+.DS_Store
