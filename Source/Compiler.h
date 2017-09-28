@@ -13,7 +13,7 @@ public:
 	
 	virtual ~Compiler();
 
-	virtual void Add( const char* _file );
+	virtual bool Add( const char* _file );
 	
 	inline void SetFileName( const char *f ) { fileName = f; Flush(); }
 

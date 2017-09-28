@@ -1,0 +1,5 @@
+- bundle: Compiled
+  output: Resource
+  files: 
+    - file: "../LICENCE.md"
+    - file: "../README.md"

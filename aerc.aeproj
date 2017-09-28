@@ -1,7 +1,7 @@
 solution 	"aerc"
-	architecture "amd64"
 	configurations { "Release", "Debug" }
 	flags { "StaticRuntime" }
+	cppdialect "C++11"
 	location ""
 
 	filter "configurations:Debug"
@@ -11,6 +11,10 @@ solution 	"aerc"
 	filter "configurations:Release"
 		flags       { "NoBufferSecurityCheck", "NoRuntimeChecks" }
 		optimize    "Full"
+
+	filter { "system:macosx", "action:gmake" }
+		buildoptions { "-mmacosx-version-min=10.4" }
+		linkoptions  { "-mmacosx-version-min=10.4" }
 	
 project 	"aerc"
 	objdir		"Build/%{cfg.systemarch}"
@@ -18,12 +22,14 @@ project 	"aerc"
 	kind 		"ConsoleApp"
 
 	files {	
-		"Source/*.cpp",
-		"Source/*.h"
+		"Source/**.cpp",
+		"Source/**.h"
 	}
 
 	includedirs {
-		"Source"
+		"Source",
+		"Source/YAML/include",
+		"Source/YAML/src"
 	}
 
 	filter "system:windows"
