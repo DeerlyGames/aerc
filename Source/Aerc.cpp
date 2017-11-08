@@ -226,7 +226,6 @@ bool FromFile(const char* _file){
 		return false;
 	}
 
-
 	YAML::Node doc;
 
 	try {
