@@ -74,8 +74,8 @@ bool Compiler::Add( const char* _file )
 
 void Compiler::Flush()
 {
-	std::string outputNameSpace = fileName;
-//	outputNameSpace = ReplaceString(outputNameSpace, "\\", "/");
+	std::string outputNameSpace = ReplaceString(fileName, "\\", "/");
+	outputNameSpace = outputNameSpace.substr( outputNameSpace.find_last_of('/')+1, outputNameSpace.npos );
 
 	if( data.tellp() <= 0 )
 		return;
@@ -122,8 +122,6 @@ const char* "<< outputNameSpace <<"_GetText(const char* _key); \n\
  /////////////////////////////////////////////\n\
 \n\
 #include \"" << outputNameSpace << ".h\"\n\
-\n\
-#include \"Resource.h\"\n\
 #include <string.h>\n\
 #include <stdlib.h>\n\
 #include <stdio.h>\n\
