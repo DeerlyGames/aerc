@@ -32,5 +32,8 @@ project 	"aerc"
 		"Source/YAML/src"
 	}
 
+	filter "system:linux"
+		linkoptions { "-static-libgcc -static-libstdc++" }
+
 	filter "system:windows"
 		files{ "aerc.rc" }
