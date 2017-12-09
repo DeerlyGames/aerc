@@ -159,8 +159,10 @@ int "<<outputNameSpace<<"_Has(const char* _key){\n\
 }\n\
 \n\
 const char* "<<outputNameSpace<<"_GetText(const char* _key){\n\
-	if(!"<<outputNameSpace<<"_Has) return NULL; \n\
-	const struct RESOURCE_INDEX *r = resources_index; \n\
+	const struct RESOURCE_INDEX *r = resources_index;\n\
+	const int h = hash( _key );\n\
+	for( ; r->hash && r->hash != h; ++r );\n\
+	if( !r->hash )	return 0;\n\
 	const int len = r->length;\n\
 	char* buffer = (char*)malloc(sizeof(char)*len+1);\n\
 	strncpy ( buffer, &resources_data[r->offset], len );\n\

@@ -210,18 +210,18 @@ bool ProcessBundle(Aerc_Bundle& bundle){
 	return true;
 }
 
-bool FromFile(const char* _file){
-
+bool FromFile(const char* _file)
+{
 	if(!FileExists(_file)){
 		std::cout<< "Your input " << _file << " does not seem to be a file.";
 		return false;	
 	}
 	const std::string old_cur = GetCurrentPath();
 	const std::string tmp = StringReplace(_file, "\\", "/");
-	const std::string folder = tmp.substr(0, tmp.find_last_of('/'));
+	const std::string folder = (tmp.find('/')!=std::string::npos) ? tmp.substr(0, tmp.find_last_of('/')) : "";
 	const std::string file = tmp.substr(tmp.find_last_of('/')+1, tmp.size());
 
-	if(!SetCurrentPath(folder)){
+	if(folder.length()>0 && !SetCurrentPath(folder)){
 		std::cout << "Unable to change current path to " << folder << std::endl;
 		return false;
 	}
