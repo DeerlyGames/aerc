@@ -22,6 +22,6 @@ int main( int argc, char* argv[] )
 	int i = 0;
 	if(argc==1) displayHelp(argv[0]);
 	if (++i != argc)
-		return FromFile(argv[i]);
+		return !FromFile(argv[i]);
 	return 0;
 }

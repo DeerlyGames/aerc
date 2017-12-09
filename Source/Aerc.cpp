@@ -212,6 +212,7 @@ bool ProcessBundle(Aerc_Bundle& bundle){
 
 bool FromFile(const char* _file)
 {
+
 	if(!FileExists(_file)){
 		std::cout<< "Your input " << _file << " does not seem to be a file.";
 		return false;	
