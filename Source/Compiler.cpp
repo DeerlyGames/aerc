@@ -163,8 +163,15 @@ char* "<<outputNameSpace<<"_GetText(const char* _key, int* _len){\n\
 	const int h = hash( _key );\n\
 	for( ; r->hash && r->hash != h; ++r );\n\
 	if( !r->hash )	return 0;\n\
-	(*_len) = r->length;\n\
-	return &resources_data[r->offset]; \n\
+	const int len = r->length;\n\
+	(*_len) = r->length+2;\n\
+	char* buffer = (char*)malloc(sizeof(char)*len+2);\n\
+	strncpy ( buffer, &resources_data[r->offset], len );\n\
+	buffer[len]=\'\\0\';\n\
+	buffer[len+1]=\'\\0\';\n\
+	const char* res = strdup(buffer);\n\
+	free(buffer);\n\
+	return res;\n\
 }" << std::endl;
 	}
 
