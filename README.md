@@ -5,14 +5,7 @@
 ## Overview
 **aerc** is a resource compiler for C/C++. 
 
-**aerc** is invoked in the following way.
-
-```sh
-    $ aemake [input]
-```
-## TODO
-Archiving
-Shaders
+Documentation is in progress.
 
 ## [License](https://github.com/DeerlyGames/aerc/blob/master/LICENSE)
 
