@@ -11,19 +11,10 @@ endif
 .PHONY: clean prebuild prelink
 
 ifeq ($(config),release)
-  ifeq ($(origin CC), default)
-    CC = gcc
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = g++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
   RESCOMP = windres
-  TARGETDIR = Build/Linux64/Release
-  TARGET = $(TARGETDIR)/aerc
-  OBJDIR = Build/Linux64/Release
+  TARGETDIR = Build/Win64/Release
+  TARGET = $(TARGETDIR)/aerc.exe
+  OBJDIR = Build/Win64/Release
   DEFINES +=
   INCLUDES += -ISource -ISource/YAML/include -ISource/YAML/src
   FORCE_INCLUDE +=
@@ -33,16 +24,13 @@ ifeq ($(config),release)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s -static-libgcc -static-libstdc++
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
   LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
   endef
   define POSTBUILDCMDS
-	@echo Running postbuild commands
-	$(SILENT) echo Stripping symbols.
-	$(SILENT) strip -s "$(TARGET)"
   endef
 all: prebuild prelink $(TARGET)
 	@:
@@ -50,19 +38,10 @@ all: prebuild prelink $(TARGET)
 endif
 
 ifeq ($(config),debug)
-  ifeq ($(origin CC), default)
-    CC = gcc
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = g++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
   RESCOMP = windres
-  TARGETDIR = Build/Linux64/Debug
-  TARGET = $(TARGETDIR)/aerc
-  OBJDIR = Build/Linux64/Debug
+  TARGETDIR = Build/Win64/Debug
+  TARGET = $(TARGETDIR)/aerc.exe
+  OBJDIR = Build/Win64/Debug
   DEFINES +=
   INCLUDES += -ISource -ISource/YAML/include -ISource/YAML/src
   FORCE_INCLUDE +=
@@ -72,7 +51,7 @@ ifeq ($(config),debug)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -static-libgcc -static-libstdc++
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
   LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -122,6 +101,7 @@ OBJECTS := \
 	$(OBJDIR)/tag.o \
 
 RESOURCES := \
+	$(OBJDIR)/aerc.res \
 
 CUSTOMFILES := \
 
@@ -138,7 +118,7 @@ $(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(TARGETDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(TARGETDIR)) mkdir $(subst /,\\,$(TARGETDIR))
+	$(SILENT) mkdir $(subst /,\\,$(TARGETDIR))
 endif
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
@@ -166,7 +146,7 @@ $(GCH): $(PCH)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 endif
@@ -176,7 +156,7 @@ $(OBJDIR)/Aerc.o: Source/Aerc.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Archiver.o: Source/Archiver.cpp
@@ -184,7 +164,7 @@ $(OBJDIR)/Archiver.o: Source/Archiver.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Compiler.o: Source/Compiler.cpp
@@ -192,7 +172,7 @@ $(OBJDIR)/Compiler.o: Source/Compiler.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Main.o: Source/Main.cpp
@@ -200,7 +180,7 @@ $(OBJDIR)/Main.o: Source/Main.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/binary.o: Source/YAML/src/binary.cpp
@@ -208,7 +188,7 @@ $(OBJDIR)/binary.o: Source/YAML/src/binary.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/graphbuilder.o: Source/YAML/src/contrib/graphbuilder.cpp
@@ -216,7 +196,7 @@ $(OBJDIR)/graphbuilder.o: Source/YAML/src/contrib/graphbuilder.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/graphbuilderadapter.o: Source/YAML/src/contrib/graphbuilderadapter.cpp
@@ -224,7 +204,7 @@ $(OBJDIR)/graphbuilderadapter.o: Source/YAML/src/contrib/graphbuilderadapter.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/convert.o: Source/YAML/src/convert.cpp
@@ -232,7 +212,7 @@ $(OBJDIR)/convert.o: Source/YAML/src/convert.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/directives.o: Source/YAML/src/directives.cpp
@@ -240,7 +220,7 @@ $(OBJDIR)/directives.o: Source/YAML/src/directives.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/emit.o: Source/YAML/src/emit.cpp
@@ -248,7 +228,7 @@ $(OBJDIR)/emit.o: Source/YAML/src/emit.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/emitfromevents.o: Source/YAML/src/emitfromevents.cpp
@@ -256,7 +236,7 @@ $(OBJDIR)/emitfromevents.o: Source/YAML/src/emitfromevents.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/emitter.o: Source/YAML/src/emitter.cpp
@@ -264,7 +244,7 @@ $(OBJDIR)/emitter.o: Source/YAML/src/emitter.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/emitterstate.o: Source/YAML/src/emitterstate.cpp
@@ -272,7 +252,7 @@ $(OBJDIR)/emitterstate.o: Source/YAML/src/emitterstate.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/emitterutils.o: Source/YAML/src/emitterutils.cpp
@@ -280,7 +260,7 @@ $(OBJDIR)/emitterutils.o: Source/YAML/src/emitterutils.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/exceptions.o: Source/YAML/src/exceptions.cpp
@@ -288,7 +268,7 @@ $(OBJDIR)/exceptions.o: Source/YAML/src/exceptions.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/exp.o: Source/YAML/src/exp.cpp
@@ -296,7 +276,7 @@ $(OBJDIR)/exp.o: Source/YAML/src/exp.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/memory.o: Source/YAML/src/memory.cpp
@@ -304,7 +284,7 @@ $(OBJDIR)/memory.o: Source/YAML/src/memory.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/node.o: Source/YAML/src/node.cpp
@@ -312,7 +292,7 @@ $(OBJDIR)/node.o: Source/YAML/src/node.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/node_data.o: Source/YAML/src/node_data.cpp
@@ -320,7 +300,7 @@ $(OBJDIR)/node_data.o: Source/YAML/src/node_data.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/nodebuilder.o: Source/YAML/src/nodebuilder.cpp
@@ -328,7 +308,7 @@ $(OBJDIR)/nodebuilder.o: Source/YAML/src/nodebuilder.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/nodeevents.o: Source/YAML/src/nodeevents.cpp
@@ -336,7 +316,7 @@ $(OBJDIR)/nodeevents.o: Source/YAML/src/nodeevents.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/null.o: Source/YAML/src/null.cpp
@@ -344,7 +324,7 @@ $(OBJDIR)/null.o: Source/YAML/src/null.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/ostream_wrapper.o: Source/YAML/src/ostream_wrapper.cpp
@@ -352,7 +332,7 @@ $(OBJDIR)/ostream_wrapper.o: Source/YAML/src/ostream_wrapper.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/parse.o: Source/YAML/src/parse.cpp
@@ -360,7 +340,7 @@ $(OBJDIR)/parse.o: Source/YAML/src/parse.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/parser.o: Source/YAML/src/parser.cpp
@@ -368,7 +348,7 @@ $(OBJDIR)/parser.o: Source/YAML/src/parser.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/regex_yaml.o: Source/YAML/src/regex_yaml.cpp
@@ -376,7 +356,7 @@ $(OBJDIR)/regex_yaml.o: Source/YAML/src/regex_yaml.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/scanner.o: Source/YAML/src/scanner.cpp
@@ -384,7 +364,7 @@ $(OBJDIR)/scanner.o: Source/YAML/src/scanner.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/scanscalar.o: Source/YAML/src/scanscalar.cpp
@@ -392,7 +372,7 @@ $(OBJDIR)/scanscalar.o: Source/YAML/src/scanscalar.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/scantag.o: Source/YAML/src/scantag.cpp
@@ -400,7 +380,7 @@ $(OBJDIR)/scantag.o: Source/YAML/src/scantag.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/scantoken.o: Source/YAML/src/scantoken.cpp
@@ -408,7 +388,7 @@ $(OBJDIR)/scantoken.o: Source/YAML/src/scantoken.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/simplekey.o: Source/YAML/src/simplekey.cpp
@@ -416,7 +396,7 @@ $(OBJDIR)/simplekey.o: Source/YAML/src/simplekey.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/singledocparser.o: Source/YAML/src/singledocparser.cpp
@@ -424,7 +404,7 @@ $(OBJDIR)/singledocparser.o: Source/YAML/src/singledocparser.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/stream.o: Source/YAML/src/stream.cpp
@@ -432,7 +412,7 @@ $(OBJDIR)/stream.o: Source/YAML/src/stream.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/tag.o: Source/YAML/src/tag.cpp
@@ -440,9 +420,17 @@ $(OBJDIR)/tag.o: Source/YAML/src/tag.cpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)
 else
-	$(SILENT) if not exist $(subst /,\\,$(OBJDIR)) mkdir $(subst /,\\,$(OBJDIR))
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/aerc.res: aerc.rc
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+	$(SILENT) $(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))

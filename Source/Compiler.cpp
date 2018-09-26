@@ -100,7 +100,7 @@ extern \"C\" { \n\
 \n\
 int "<< outputNameSpace <<"_Has(const char* _key); \n\
 \n\
-char* "<< outputNameSpace <<"_GetText(const char* _key, int* _len); \n\
+int "<< outputNameSpace <<"_GetText(const char* _key, char** buffer , int* _len); \n\
 \n\
 #ifdef __cplusplus \n\
 } \n\
@@ -158,20 +158,14 @@ int "<<outputNameSpace<<"_Has(const char* _key){\n\
 	return 1;	\n\
 }\n\
 \n\
-char* "<<outputNameSpace<<"_GetText(const char* _key, int* _len){\n\
+int "<< outputNameSpace <<"_GetText(const char* _key, char** buffer , int* _len){\n\
 	const struct RESOURCE_INDEX *r = resources_index;\n\
 	const int h = hash( _key );\n\
 	for( ; r->hash && r->hash != h; ++r );\n\
 	if( !r->hash )	return 0;\n\
-	const int len = r->length;\n\
-	(*_len) = r->length+2;\n\
-	char* buffer = (char*)malloc(sizeof(char)*len+2);\n\
-	strncpy ( buffer, &resources_data[r->offset], len );\n\
-	buffer[len]=\'\\0\';\n\
-	buffer[len+1]=\'\\0\';\n\
-	const char* res = strdup(buffer);\n\
-	free(buffer);\n\
-	return res;\n\
+	(*_len) = r->length;\n\
+    *buffer = &resources_data[r->offset];\n\
+    return 1;\n\
 }" << std::endl;
 	}
 
